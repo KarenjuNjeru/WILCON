@@ -1210,14 +1210,15 @@ async function calcPayroll() {
   document.getElementById('py-period-badge').textContent  = periodLbl;
   document.getElementById('py-gen-time').textContent     = `Generated: ${new Date().toLocaleString('en-KE')}`;
 
-  // Earnings
+ // Earnings
 const HOURS_PER_DAY = 8;
 
 function fmtDays(hours) {
   const days = hours / HOURS_PER_DAY;
   return `${fmtN(days)} day${days !== 1 ? 's' : ''}`;
 }
-  document.getElementById('py-earnings-lines').innerHTML = [
+
+document.getElementById('py-earnings-lines').innerHTML = [
   line(
     'Normal Days',
     `${fmtDays(normalHrs)} × KES ${normalRate}`,
@@ -1227,8 +1228,8 @@ function fmtDays(hours) {
 
   otHrs > 0
     ? line(
-        'Overtime Days',
-        `${fmtDays(otHrs)} × KES ${otRate}`,
+        'Overtime Hours',
+        `${fmtN(otHrs)}h × KES ${otRate}`,
         fmtK(otPay),
         'income'
       )
@@ -1238,6 +1239,7 @@ function fmtDays(hours) {
 
   lineBold('Gross Pay', '', fmtK(p.grossPay), 'income')
 ].join('');
+
 
   // Tax calculations
   document.getElementById('py-tax-lines').innerHTML = [
