@@ -1001,7 +1001,7 @@ function computePayroll(grossPay, cfg = RATES, paysPAYE = true, paysNSSF = true,
   const personalRelief = cfg.personalRelief || 2400;
 
   // ── NSSF Tier 1: 6% of first KES 9,000 ──
-  let nssf1 = paysNSSF ? 9000 * 0.06 : 0;          // KES 540
+let nssf1 = paysNSSF ? grossPay * 0.06 : 0;
 
   // ── NSSF Tier 2: 6% of (gross - 9000), capped at KES 6,480 ──
   let nssf2 = 0;
