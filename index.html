@@ -1215,25 +1215,25 @@ const HOURS_PER_DAY = 8;
 
 function fmtDays(hours) {
   const days = hours / HOURS_PER_DAY;
-  return `${fmtN(days)} day${days !== 1 ? 's' : ''}`;
+
+  // No rounding
+  return `${days} day${days !== 1 ? 's' : ''}`;
 }
 
 const dailyRate = normalRate * HOURS_PER_DAY;
 
 document.getElementById('py-earnings-lines').innerHTML = [
-  // Normal hours converted to days + DAILY RATE
   line(
     'Normal Days',
-    `${fmtDays(normalHrs)} × KES ${fmtN(dailyRate)}`,
+    `${fmtDays(normalHrs)} × KES ${dailyRate}`,
     fmtK(normalPay),
     'income'
   ),
 
-  // Overtime remains in hours + hourly rate
   otHrs > 0
     ? line(
         'Overtime Hours',
-        `${fmtN(otHrs)}h × KES ${fmtN(otRate)}`,
+        `${otHrs}h × KES ${otRate}`,
         fmtK(otPay),
         'income'
       )
@@ -1243,8 +1243,6 @@ document.getElementById('py-earnings-lines').innerHTML = [
 
   lineBold('Gross Pay', '', fmtK(p.grossPay), 'income')
 ].join('');
-
-
   // Tax calculations
   document.getElementById('py-tax-lines').innerHTML = [
     line('Taxable Pay', '', fmtK(p.taxablePay)),
