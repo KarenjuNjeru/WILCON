@@ -1211,12 +1211,33 @@ async function calcPayroll() {
   document.getElementById('py-gen-time').textContent     = `Generated: ${new Date().toLocaleString('en-KE')}`;
 
   // Earnings
+const HOURS_PER_DAY = 8;
+
+function fmtDays(hours) {
+  const days = hours / HOURS_PER_DAY;
+  return `${fmtN(days)} day${days !== 1 ? 's' : ''}`;
+}
   document.getElementById('py-earnings-lines').innerHTML = [
-    line('Normal Hours', `${fmtN(normalHrs)}h × KES ${normalRate}`, fmtK(normalPay), 'income'),
-    otHrs > 0 ? line('Overtime Hours', `${fmtN(otHrs)}h × KES ${otRate}`, fmtK(otPay), 'income') : '',
-    lineDivider(),
-    lineBold('Gross Pay', '', fmtK(p.grossPay), 'income')
-  ].join('');
+  line(
+    'Normal Days',
+    `${fmtDays(normalHrs)} × KES ${normalRate}`,
+    fmtK(normalPay),
+    'income'
+  ),
+
+  otHrs > 0
+    ? line(
+        'Overtime Days',
+        `${fmtDays(otHrs)} × KES ${otRate}`,
+        fmtK(otPay),
+        'income'
+      )
+    : '',
+
+  lineDivider(),
+
+  lineBold('Gross Pay', '', fmtK(p.grossPay), 'income')
+].join('');
 
   // Tax calculations
   document.getElementById('py-tax-lines').innerHTML = [
