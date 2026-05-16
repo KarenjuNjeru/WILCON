@@ -1210,7 +1210,8 @@ async function calcPayroll() {
   document.getElementById('py-period-badge').textContent  = periodLbl;
   document.getElementById('py-gen-time').textContent     = `Generated: ${new Date().toLocaleString('en-KE')}`;
 
- // Earnings
+
+  // Earnings
 const HOURS_PER_DAY = 8;
 
 function fmtDays(hours) {
@@ -1219,13 +1220,15 @@ function fmtDays(hours) {
 }
 
 document.getElementById('py-earnings-lines').innerHTML = [
+  // Convert ONLY normal hours to days
   line(
-    'Normal Days',
+    'Normal Hours',
     `${fmtDays(normalHrs)} × KES ${normalRate}`,
     fmtK(normalPay),
     'income'
   ),
 
+  // Keep overtime in hours
   otHrs > 0
     ? line(
         'Overtime Hours',
