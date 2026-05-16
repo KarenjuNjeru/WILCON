@@ -1211,7 +1211,6 @@ async function calcPayroll() {
   document.getElementById('py-gen-time').textContent     = `Generated: ${new Date().toLocaleString('en-KE')}`;
 
 
-  // Earnings
 const HOURS_PER_DAY = 8;
 
 function fmtDays(hours) {
@@ -1219,20 +1218,22 @@ function fmtDays(hours) {
   return `${fmtN(days)} day${days !== 1 ? 's' : ''}`;
 }
 
+const dailyRate = normalRate * HOURS_PER_DAY;
+
 document.getElementById('py-earnings-lines').innerHTML = [
-  // Convert ONLY normal hours to days
+  // Normal hours converted to days + DAILY RATE
   line(
-    'Normal Hours',
-    `${fmtDays(normalHrs)} × KES ${normalRate}`,
+    'Normal Days',
+    `${fmtDays(normalHrs)} × KES ${fmtN(dailyRate)}`,
     fmtK(normalPay),
     'income'
   ),
 
-  // Keep overtime in hours
+  // Overtime remains in hours + hourly rate
   otHrs > 0
     ? line(
         'Overtime Hours',
-        `${fmtN(otHrs)}h × KES ${otRate}`,
+        `${fmtN(otHrs)}h × KES ${fmtN(otRate)}`,
         fmtK(otPay),
         'income'
       )
