@@ -1014,20 +1014,57 @@ tbody td{padding:9px 11px;color:var(--text2);vertical-align:middle}
 
 <!-- MODALS -->
 <div class="mbk" id="emp-modal">
-  <div class="modal">
-    <div class="mhdr"><div class="mtitle"><svg><use href="#i-user"/></svg>New Employee</div><button class="mclose" onclick="closeModal('emp-modal')"><svg><use href="#i-x"/></svg></button></div>
+  <div class="modal modal-xl">
+    <div class="mhdr"><div class="mtitle"><svg><use href="#i-user"/></svg><span id="emp-modal-title">New Employee</span></div><button class="mclose" onclick="closeModal('emp-modal')"><svg><use href="#i-x"/></svg></button></div>
     <div class="mbody">
-      <div class="form-grid">
-        <div class="fg"><label class="fl">Employee No *</label><input class="fi" id="m-empno" placeholder="EMP001"/></div>
-        <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="m-fullname" placeholder="John Doe"/></div>
-        <div class="fg"><label class="fl">Status</label><select class="fsel" id="m-status"><option>Active</option><option>Inactive</option></select></div>
-        <div class="fg"><label class="fl">Department</label><input class="fi" id="m-dept" placeholder="Operations"/></div>
-        <div class="fg"><label class="fl">Phone</label><input class="fi" id="m-phone" placeholder="+254700000000"/></div>
-        <div class="fg"><label class="fl">Hire Date</label><input class="fi" type="date" id="m-hired"/></div>
-        <div class="fg"><label class="fl">Shift Group</label><input class="fi" id="m-group" placeholder="MORNING"/></div>
+      <div class="tabs" style="margin-bottom:16px">
+        <div class="tab active" onclick="empTab('basic',this)">Basic Info</div>
+        <div class="tab" onclick="empTab('employment',this)">Employment</div>
+        <div class="tab" onclick="empTab('banking',this)">Banking & KRA</div>
+        <div class="tab" onclick="empTab('nok',this)">Next of Kin</div>
       </div>
+      <div id="emp-tab-basic">
+        <div class="form-grid-3">
+          <div class="fg"><label class="fl">Employee No *</label><input class="fi" id="m-empno" placeholder="EMP001"/></div>
+          <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="m-fullname" placeholder="John Doe"/></div>
+          <div class="fg"><label class="fl">Status</label><select class="fsel" id="m-status"><option>Active</option><option>Inactive</option></select></div>
+          <div class="fg"><label class="fl">Phone</label><input class="fi" id="m-phone" placeholder="+254700000000"/></div>
+          <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="m-email" placeholder="emp@company.com"/></div>
+          <div class="fg"><label class="fl">Gender</label><select class="fsel" id="m-gender"><option value="">—</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+          <div class="fg"><label class="fl">Date of Birth</label><input class="fi" type="date" id="m-dob"/></div>
+          <div class="fg"><label class="fl">National ID</label><input class="fi" id="m-natid" placeholder="12345678"/></div>
+          <div class="fg"><label class="fl">Hire Date</label><input class="fi" type="date" id="m-hired"/></div>
+        </div>
+        <div class="fg mt8"><label class="fl">Address</label><textarea class="fi" id="m-address" rows="2" placeholder="Physical address…"></textarea></div>
+      </div>
+      <div id="emp-tab-employment" class="hidden">
+        <div class="form-grid-3">
+          <div class="fg"><label class="fl">Department</label><input class="fi" id="m-dept" placeholder="Operations"/></div>
+          <div class="fg"><label class="fl">Job Title</label><input class="fi" id="m-jobtitle" placeholder="Field Officer"/></div>
+          <div class="fg"><label class="fl">Employment Type</label><select class="fsel" id="m-emptype"><option value="">—</option><option>PERMANENT</option><option>CONTRACT</option><option>CASUAL</option><option>INTERN</option></select></div>
+          <div class="fg"><label class="fl">Basic Salary (KES)</label><input class="fi" type="number" id="m-salary" placeholder="0"/></div>
+          <div class="fg"><label class="fl">Shift Group</label><input class="fi" id="m-group" placeholder="MORNING"/></div>
+        </div>
+      </div>
+      <div id="emp-tab-banking" class="hidden">
+        <div class="form-grid-3">
+          <div class="fg"><label class="fl">KRA PIN</label><input class="fi" id="m-kra" placeholder="A000111222B"/></div>
+          <div class="fg"><label class="fl">NSSF No</label><input class="fi" id="m-nssf" placeholder="NSSF number"/></div>
+          <div class="fg"><label class="fl">NHIF No</label><input class="fi" id="m-nhif" placeholder="NHIF number"/></div>
+          <div class="fg"><label class="fl">Bank Name</label><input class="fi" id="m-bank" placeholder="Equity Bank"/></div>
+          <div class="fg"><label class="fl">Bank Account</label><input class="fi" id="m-bankacct" placeholder="0123456789"/></div>
+        </div>
+      </div>
+      <div id="emp-tab-nok" class="hidden">
+        <div class="form-grid-3">
+          <div class="fg"><label class="fl">NOK Full Name</label><input class="fi" id="m-nokname" placeholder="Jane Doe"/></div>
+          <div class="fg"><label class="fl">NOK Phone</label><input class="fi" id="m-nokphone" placeholder="+254711000000"/></div>
+          <div class="fg"><label class="fl">NOK Relation</label><input class="fi" id="m-nokrel" placeholder="Spouse, Parent…"/></div>
+        </div>
+      </div>
+      <input type="hidden" id="m-editing-empno"/>
     </div>
-    <div class="mfooter"><button class="btn btn-ghost" onclick="closeModal('emp-modal')">Cancel</button><button class="btn btn-primary" onclick="saveEmployee()"><svg><use href="#i-check"/></svg>Save</button></div>
+    <div class="mfooter"><button class="btn btn-ghost" onclick="closeModal('emp-modal')">Cancel</button><button class="btn btn-primary" onclick="saveEmployee()"><svg><use href="#i-check"/></svg>Save Employee</button></div>
   </div>
 </div>
 
@@ -1764,10 +1801,138 @@ async function loadAnalytics(){if(!S.emp.length)await loadDash();const avgHrs=S.
 // ═══════════════════════════════════════════════════════════
 //  EMPLOYEES
 // ═══════════════════════════════════════════════════════════
-async function loadEmps(){try{const d=await api('GET','/GetAllEmployees');S.emp=Array.isArray(d)?d:[];S.ef=[...S.emp];PG.emp=1;renderEmp();document.getElementById('emp-cnt').textContent=S.emp.length;populateEmpDropdowns();toast(`Loaded ${S.emp.length} employees`);}catch(e){toast(e.message,'error');}}
-function renderEmp(){const data=S.ef,start=(PG.emp-1)*CFG.pageSize,sl=data.slice(start,start+CFG.pageSize);const tb=document.getElementById('emp-tb');if(!data.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-text">No employees</div></div></td></tr>`;document.getElementById('emp-pgn').innerHTML='';return;}tb.innerHTML=sl.map(e=>`<tr><td class="t-primary t-mono">${e.employeeNo||'—'}</td><td class="t-primary">${e.fullName||'—'}</td><td><span class="badge ${e.status==='Active'?'b-green':'b-amber'}">${e.status||'—'}</span></td><td><span class="badge b-gray">${e.department||'—'}</span></td><td class="t-mono">${e.phoneNumber||'—'}</td><td>${e.hiredDay||'—'}</td><td><button class="btn btn-ghost btn-xs" onclick='showDetail(${JSON.stringify(e)})'>View</button></td></tr>`).join('');renderPgn('emp',data.length,'emp-pgn');document.getElementById('emp-cnt').textContent=data.length;}
-async function lookupEmp(){const v=document.getElementById('lu-empno').value.trim();if(!v){toast('Select employee','error');return;}const r=document.getElementById('lu-result');try{const d=await api('GET',`/GetEmployeeByEmployeeNo/${encodeURIComponent(v)}`);r.innerHTML=empProfileHTML(d);toast('Found');}catch(e){r.innerHTML=`<div class="empty"><div class="empty-text" style="color:var(--c4)">${e.message}</div></div>`;toast(e.message,'error');}}
-async function saveEmployee(){const data={employeeNo:document.getElementById('m-empno').value.trim(),fullName:document.getElementById('m-fullname').value.trim(),status:document.getElementById('m-status').value,department:document.getElementById('m-dept').value.trim(),phoneNumber:document.getElementById('m-phone').value.trim(),hiredDay:document.getElementById('m-hired').value};if(!data.employeeNo||!data.fullName){toast('Employee No and Name required','error');return;}try{await api('POST','/CreateEmployee',data);toast('Employee created');closeModal('emp-modal');await loadEmps();const grp=document.getElementById('m-group').value.trim();if(grp)await api('POST','/RegisterUsersShift',{employeeNo:data.employeeNo,group:grp});}catch(e){toast(e.message,'error');}}
+function empTab(name, el) {
+  ['basic','employment','banking','nok'].forEach(t => document.getElementById(`emp-tab-${t}`).classList.toggle('hidden', t !== name));
+  document.querySelectorAll('#emp-modal .tabs .tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+function openEmpModal(emp) {
+  emp = emp || null;
+  document.getElementById('emp-modal-title').textContent = emp ? 'Edit Employee' : 'New Employee';
+  document.getElementById('m-editing-empno').value = emp ? emp.employeeNo : '';
+  document.getElementById('m-empno').value = emp ? emp.employeeNo : '';
+  document.getElementById('m-empno').disabled = !!emp;
+  document.getElementById('m-fullname').value = emp ? emp.fullName || '' : '';
+  document.getElementById('m-status').value = emp ? emp.status || 'Active' : 'Active';
+  document.getElementById('m-phone').value = emp ? emp.phoneNumber || '' : '';
+  document.getElementById('m-email').value = emp ? emp.email || '' : '';
+  document.getElementById('m-gender').value = emp ? emp.gender || '' : '';
+  document.getElementById('m-dob').value = emp ? emp.dateOfBirth || '' : '';
+  document.getElementById('m-natid').value = emp ? emp.nationalId || '' : '';
+  document.getElementById('m-hired').value = emp ? emp.hiredDay || '' : '';
+  document.getElementById('m-address').value = emp ? emp.address || '' : '';
+  document.getElementById('m-dept').value = emp ? emp.department || '' : '';
+  document.getElementById('m-jobtitle').value = emp ? emp.jobTitle || '' : '';
+  document.getElementById('m-emptype').value = emp ? emp.employmentType || '' : '';
+  document.getElementById('m-salary').value = emp ? emp.basicSalary || '' : '';
+  document.getElementById('m-group').value = emp ? emp.shiftGroup || '' : '';
+  document.getElementById('m-kra').value = emp ? emp.kraPinNo || '' : '';
+  document.getElementById('m-nssf').value = emp ? emp.nssfNo || '' : '';
+  document.getElementById('m-nhif').value = emp ? emp.nhifNo || '' : '';
+  document.getElementById('m-bank').value = emp ? emp.bankName || '' : '';
+  document.getElementById('m-bankacct').value = emp ? emp.bankAccount || '' : '';
+  document.getElementById('m-nokname').value = emp ? emp.nextOfKinName || '' : '';
+  document.getElementById('m-nokphone').value = emp ? emp.nextOfKinPhone || '' : '';
+  document.getElementById('m-nokrel').value = emp ? emp.nextOfKinRelation || '' : '';
+  empTab('basic', document.querySelector('#emp-modal .tabs .tab'));
+  openModal('emp-modal');
+}
+async function saveEmployee() {
+  const editingEmpNo = document.getElementById('m-editing-empno').value;
+  const isEdit = !!editingEmpNo;
+  const empNoRaw = document.getElementById('m-empno').value.trim();
+  const fullName = document.getElementById('m-fullname').value.trim();
+  if(!fullName) { toast('Full name is required', 'error'); return; }
+  if(!isEdit && !empNoRaw) { toast('Employee number is required', 'error'); return; }
+  const data = {
+    employeeNo: empNoRaw, fullName, status: document.getElementById('m-status').value,
+    phoneNumber: document.getElementById('m-phone').value.trim(), email: document.getElementById('m-email').value.trim(),
+    gender: document.getElementById('m-gender').value, dateOfBirth: document.getElementById('m-dob').value || null,
+    nationalId: document.getElementById('m-natid').value.trim(), hiredDay: document.getElementById('m-hired').value,
+    address: document.getElementById('m-address').value.trim(), department: document.getElementById('m-dept').value.trim(),
+    jobTitle: document.getElementById('m-jobtitle').value.trim(), employmentType: document.getElementById('m-emptype').value,
+    basicSalary: parseFloat(document.getElementById('m-salary').value) || null, shiftGroup: document.getElementById('m-group').value.trim(),
+    kraPinNo: document.getElementById('m-kra').value.trim(), nssfNo: document.getElementById('m-nssf').value.trim(),
+    nhifNo: document.getElementById('m-nhif').value.trim(), bankName: document.getElementById('m-bank').value.trim(),
+    bankAccount: document.getElementById('m-bankacct').value.trim(), nextOfKinName: document.getElementById('m-nokname').value.trim(),
+    nextOfKinPhone: document.getElementById('m-nokphone').value.trim(), nextOfKinRelation: document.getElementById('m-nokrel').value.trim(),
+  };
+  try {
+    if(isEdit) { await api('PUT', `/UpdateEmployee/${encodeURIComponent(editingEmpNo)}`, data); toast('Employee updated', 'success'); }
+    else { await api('POST', '/CreateEmployee', data); toast('Employee created', 'success'); }
+    closeModal('emp-modal');
+    await loadEmps();
+  } catch(e) { toast(e.message, 'error'); }
+}
+async function deleteEmployee(empNo) {
+  if(!confirm(`Permanently delete employee ${empNo}? This cannot be undone.`)) return;
+  try { await api('DELETE', `/DeleteEmployee/${encodeURIComponent(empNo)}`); toast('Employee deleted', 'warn'); loadEmps(); }
+  catch(e) { toast(e.message, 'error'); }
+}
+async function deactivateEmployee(empNo) {
+  if(!confirm(`Deactivate employee ${empNo}?`)) return;
+  try { await api('PATCH', `/DeactivateEmployee/${encodeURIComponent(empNo)}`); toast('Employee deactivated', 'warn'); loadEmps(); }
+  catch(e) { toast(e.message, 'error'); }
+}
+async function loadEmps() {
+  try {
+    const d = await api('GET', '/GetAllEmployees');
+    S.emp = Array.isArray(d) ? d : [];
+    S.ef = [...S.emp];
+    PG.emp = 1;
+    renderEmp();
+    document.getElementById('emp-cnt').textContent = S.emp.length;
+    populateEmpDropdowns();
+    toast(`Loaded ${S.emp.length} employees`);
+    const depts = [...new Set(S.emp.map(e => e.department).filter(Boolean))].sort();
+    const edf = document.getElementById('e-df');
+    if(edf) edf.innerHTML = '<option value="">All Departments</option>' + depts.map(d => `<option>${d}</option>`).join('');
+    const prd = document.getElementById('pr-dept');
+    if(prd) prd.innerHTML = '<option value="">All</option>' + depts.map(d => `<option>${d}</option>`).join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+function renderEmp() {
+  const data = S.ef, start = (PG.emp - 1) * CFG.pageSize, sl = data.slice(start, start + CFG.pageSize);
+  const tb = document.getElementById('emp-tb');
+  if(!data.length) {
+    tb.innerHTML = `<tr><td colspan="12"><div class="empty"><div class="empty-text">No employees</div></div></td></tr>`;
+    document.getElementById('emp-pgn').innerHTML = '';
+    return;
+  }
+  const typeBadge = { PERMANENT:'b-blue', CONTRACT:'b-purple', CASUAL:'b-amber', INTERN:'b-teal' };
+  tb.innerHTML = sl.map(e => `<tr>
+    <td class="t-primary t-mono">${e.employeeNo || '—'}</td>
+    <td class="t-primary">${e.fullName || '—'}</td>
+    <td style="font-size:11px">${e.jobTitle || '—'}</td>
+    <td><span class="badge b-gray">${e.department || '—'}</span></td>
+    <td><span class="badge ${typeBadge[e.employmentType] || 'b-gray'}">${e.employmentType || '—'}</span></td>
+    <td><span class="badge ${e.status === 'Active' ? 'b-green' : 'b-amber'}">${e.status || '—'}</span></td>
+    <td class="t-mono">${e.phoneNumber || '—'}</td>
+    <td class="t-mono" style="font-size:10.5px">${e.email || '—'}</td>
+    <td class="t-mono" style="font-size:10.5px">${e.bankName || '—'}</td>
+    <td class="t-mono" style="font-size:10.5px">${e.kraPinNo || '—'}</td>
+    <td class="t-mono" style="font-size:10.5px">${e.hiredDay || '—'}</td>
+    <td><div class="flex gap8">
+      <button class="btn btn-ghost btn-xs" onclick='showDetail(${JSON.stringify(e).replace(/'/g, "&apos;")})'>View</button>
+      <button class="btn btn-teal btn-xs" onclick='openEmpModal(${JSON.stringify(e).replace(/'/g, "&apos;")})'><svg><use href="#i-edit"/></svg></button>
+      <button class="btn btn-danger btn-xs" onclick="deleteEmployee('${e.employeeNo}')"><svg><use href="#i-trash"/></svg></button>
+    </div></td>
+  </tr>`).join('');
+  renderPgn('emp', data.length, 'emp-pgn');
+  document.getElementById('emp-cnt').textContent = data.length;
+}
+function empProfileHTML(e) {
+  const colors = ['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#f97316'];
+  const color = colors[(e.fullName || 'A').charCodeAt(0) % colors.length];
+  const initials = (e.fullName || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
+  const field = (lbl, val) => `<div class="emp-meta-item"><div class="emp-meta-label">${lbl}</div><div class="emp-meta-val">${val || '—'}</div></div>`;
+  return `<div class="emp-profile"><div class="emp-avatar" style="background:${color}">${initials}</div><div class="emp-profile-info"><div class="emp-name">${e.fullName || '—'}</div><div class="emp-sub">${e.employeeNo || '—'} · ${e.jobTitle || '—'} · ${e.department || '—'}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge ${e.status === 'Active' ? 'b-green' : 'b-amber'}">${e.status || '—'}</span>${e.employmentType ? `<span class="badge b-blue">${e.employmentType}</span>` : ''}</div></div></div><div class="emp-meta-grid">${field('Phone', e.phoneNumber)}${field('Email', e.email)}${field('National ID', e.nationalId)}${field('Gender', e.gender)}${field('Date of Birth', e.dateOfBirth)}${field('Hire Date', e.hiredDay)}${field('Address', e.address)}${field('Bank', e.bankName)}${field('Bank Account', e.bankAccount)}${field('KRA PIN', e.kraPinNo)}${field('NSSF No', e.nssfNo)}${field('NHIF No', e.nhifNo)}${field('Shift Group', e.shiftGroup)}${field('Basic Salary', e.basicSalary ? fmtK(e.basicSalary) : null)}${field('NOK Name', e.nextOfKinName)}${field('NOK Phone', e.nextOfKinPhone)}${field('NOK Relation', e.nextOfKinRelation)}</div>`;
+}
+function showDetail(e) {
+  document.getElementById('detail-title').textContent = e.fullName || 'Details';
+  document.getElementById('detail-body').innerHTML = empProfileHTML(e) + '<div style="height:1px;background:var(--border);margin:14px 0"></div><div class="flex gap8 wrap"><button class="btn btn-warning btn-sm" onclick="document.getElementById(\'au-id\').value=\'' + e.employeeNo + '\';nav(document.querySelector(\'[data-page=attendance-user]\'));loadUserAtt();closeModal(\'detail-modal\')"><svg><use href="#i-list"/></svg>Attendance</button><button class="btn btn-teal btn-sm" onclick=\'openEmpModal(' + JSON.stringify(e).replace(/'/g, "&apos;") + ');closeModal("detail-modal")\'><svg><use href="#i-edit"/></svg>Edit</button><button class="btn btn-primary btn-sm" onclick="document.getElementById(\'py-id\').value=\'' + e.employeeNo + '\';nav(document.querySelector(\'[data-page=payroll]\'));onPayrollEmpChange();closeModal(\'detail-modal\')"><svg><use href="#i-dollar"/></svg>Payroll</button></div>';
+  openModal('detail-modal');
+}
 
 // ═══════════════════════════════════════════════════════════
 //  DEPARTMENTS
