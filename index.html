@@ -1752,10 +1752,140 @@ function exportSnapshot(){const d={exportedAt:new Date().toISOString(),employees
 function exportAll(){const d={employees:S.emp,groups:S.grp,attendance:S.att,shifts:S.shifts,exportedAt:new Date().toISOString()};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download=`export-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('Exported');}
 
 // ═══════════════════════════════════════════════════════════
-//  EMPLOYEE PROFILE
+//  EMPLOYEE CRUD (Enhanced)
 // ═══════════════════════════════════════════════════════════
-function empProfileHTML(e){const colors=['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#f97316'];const color=colors[(e.fullName||'A').charCodeAt(0)%colors.length];const initials=(e.fullName||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();return`<div class="emp-profile"><div class="emp-avatar" style="background:${color}">${initials}</div><div class="emp-profile-info"><div class="emp-name">${e.fullName||'—'}</div><div class="emp-sub">${e.employeeNo||'—'} · ${e.department||'—'}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge ${e.status==='Active'?'b-green':'b-amber'}">${e.status||'—'}</span></div></div></div><div class="emp-meta-grid"><div class="emp-meta-item"><div class="emp-meta-label">Phone</div><div class="emp-meta-val">${e.phoneNumber||'—'}</div></div><div class="emp-meta-item"><div class="emp-meta-label">Hired</div><div class="emp-meta-val">${e.hiredDay||'—'}</div></div></div>`;}
-function showDetail(e){document.getElementById('detail-title').textContent=e.fullName||'Details';document.getElementById('detail-body').innerHTML=`${empProfileHTML(e)}<div class="divider"></div><div class="flex gap8 wrap mt8"><button class="btn btn-warning btn-sm" onclick="document.getElementById('au-id').value='${e.employeeNo}';nav(document.querySelector('[data-page=attendance-user]'));loadUserAtt();closeModal('detail-modal')"><svg><use href='#i-list'/></svg>Attendance</button><button class="btn btn-primary btn-sm" onclick="document.getElementById('py-id').value='${e.employeeNo}';nav(document.querySelector('[data-page=payroll]'));calcPayroll();closeModal('detail-modal')"><svg><use href='#i-dollar'/></svg>Payroll</button></div>`;openModal('detail-modal');}
+function empTab(name, el) {
+  ['basic','employment','banking','nok'].forEach(t => document.getElementById(`emp-tab-${t}`).classList.toggle('hidden', t !== name));
+  document.querySelectorAll('#emp-modal .tabs .tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+function openEmpModal(emp) {
+  emp = emp || null;
+  document.getElementById('emp-modal-title').textContent = emp ? 'Edit Employee' : 'New Employee';
+  document.getElementById('m-editing-empno').value = emp ? emp.employeeNo : '';
+  document.getElementById('m-empno').value = emp ? emp.employeeNo : '';
+  document.getElementById('m-empno').disabled = !!emp;
+  document.getElementById('m-fullname').value = emp ? emp.fullName || '' : '';
+  document.getElementById('m-status').value = emp ? emp.status || 'Active' : 'Active';
+  document.getElementById('m-phone').value = emp ? emp.phoneNumber || '' : '';
+  document.getElementById('m-email').value = emp ? emp.email || '' : '';
+  document.getElementById('m-gender').value = emp ? emp.gender || '' : '';
+  document.getElementById('m-dob').value = emp ? emp.dateOfBirth || '' : '';
+  document.getElementById('m-natid').value = emp ? emp.nationalId || '' : '';
+  document.getElementById('m-hired').value = emp ? emp.hiredDay || '' : '';
+  document.getElementById('m-address').value = emp ? emp.address || '' : '';
+  document.getElementById('m-dept').value = emp ? emp.department || '' : '';
+  document.getElementById('m-jobtitle').value = emp ? emp.jobTitle || '' : '';
+  document.getElementById('m-emptype').value = emp ? emp.employmentType || '' : '';
+  document.getElementById('m-salary').value = emp ? emp.basicSalary || '' : '';
+  document.getElementById('m-group').value = emp ? emp.shiftGroup || '' : '';
+  document.getElementById('m-kra').value = emp ? emp.kraPinNo || '' : '';
+  document.getElementById('m-nssf').value = emp ? emp.nssfNo || '' : '';
+  document.getElementById('m-nhif').value = emp ? emp.nhifNo || '' : '';
+  document.getElementById('m-bank').value = emp ? emp.bankName || '' : '';
+  document.getElementById('m-bankacct').value = emp ? emp.bankAccount || '' : '';
+  document.getElementById('m-nokname').value = emp ? emp.nextOfKinName || '' : '';
+  document.getElementById('m-nokphone').value = emp ? emp.nextOfKinPhone || '' : '';
+  document.getElementById('m-nokrel').value = emp ? emp.nextOfKinRelation || '' : '';
+  empTab('basic', document.querySelector('#emp-modal .tabs .tab'));
+  openModal('emp-modal');
+}
+async function saveEmployee() {
+  const editingEmpNo = document.getElementById('m-editing-empno').value;
+  const isEdit = !!editingEmpNo;
+  const empNoRaw = document.getElementById('m-empno').value.trim();
+  const fullName = document.getElementById('m-fullname').value.trim();
+  if(!fullName) { toast('Full name is required', 'error'); return; }
+  if(!isEdit && !empNoRaw) { toast('Employee number is required', 'error'); return; }
+  const data = {
+    employeeNo: empNoRaw, fullName, status: document.getElementById('m-status').value,
+    phoneNumber: document.getElementById('m-phone').value.trim(), email: document.getElementById('m-email').value.trim(),
+    gender: document.getElementById('m-gender').value, dateOfBirth: document.getElementById('m-dob').value || null,
+    nationalId: document.getElementById('m-natid').value.trim(), hiredDay: document.getElementById('m-hired').value,
+    address: document.getElementById('m-address').value.trim(), department: document.getElementById('m-dept').value.trim(),
+    jobTitle: document.getElementById('m-jobtitle').value.trim(), employmentType: document.getElementById('m-emptype').value,
+    basicSalary: parseFloat(document.getElementById('m-salary').value) || null, shiftGroup: document.getElementById('m-group').value.trim(),
+    kraPinNo: document.getElementById('m-kra').value.trim(), nssfNo: document.getElementById('m-nssf').value.trim(),
+    nhifNo: document.getElementById('m-nhif').value.trim(), bankName: document.getElementById('m-bank').value.trim(),
+    bankAccount: document.getElementById('m-bankacct').value.trim(), nextOfKinName: document.getElementById('m-nokname').value.trim(),
+    nextOfKinPhone: document.getElementById('m-nokphone').value.trim(), nextOfKinRelation: document.getElementById('m-nokrel').value.trim(),
+  };
+  try {
+    if(isEdit) { await api('PUT', `/UpdateEmployee/${encodeURIComponent(editingEmpNo)}`, data); toast('Employee updated', 'success'); }
+    else { await api('POST', '/CreateEmployee', data); toast('Employee created', 'success'); }
+    closeModal('emp-modal');
+    await loadEmps();
+  } catch(e) { toast(e.message, 'error'); }
+}
+async function deleteEmployee(empNo) {
+  if(!confirm(`Permanently delete employee ${empNo}? This cannot be undone.`)) return;
+  try { await api('DELETE', `/DeleteEmployee/${encodeURIComponent(empNo)}`); toast('Employee deleted', 'warn'); loadEmps(); }
+  catch(e) { toast(e.message, 'error'); }
+}
+async function deactivateEmployee(empNo) {
+  if(!confirm(`Deactivate employee ${empNo}?`)) return;
+  try { await api('PATCH', `/DeactivateEmployee/${encodeURIComponent(empNo)}`); toast('Employee deactivated', 'warn'); loadEmps(); }
+  catch(e) { toast(e.message, 'error'); }
+}
+async function loadEmps() {
+  try {
+    const d = await api('GET', '/GetAllEmployees');
+    S.emp = Array.isArray(d) ? d : [];
+    S.ef = [...S.emp];
+    PG.emp = 1;
+    renderEmp();
+    document.getElementById('emp-cnt').textContent = S.emp.length;
+    populateEmpDropdowns();
+    toast(`Loaded ${S.emp.length} employees`);
+    const depts = [...new Set(S.emp.map(e => e.department).filter(Boolean))].sort();
+    const edf = document.getElementById('e-df');
+    if(edf) edf.innerHTML = '<option value="">All Departments</option>' + depts.map(d => `<option>${d}</option>`).join('');
+    const prd = document.getElementById('pr-dept');
+    if(prd) prd.innerHTML = '<option value="">All</option>' + depts.map(d => `<option>${d}</option>`).join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+function renderEmp() {
+  const data = S.ef, start = (PG.emp - 1) * CFG.pageSize, sl = data.slice(start, start + CFG.pageSize);
+  const tb = document.getElementById('emp-tb');
+  if(!data.length) {
+    tb.innerHTML = `<tr><td colspan="12"><div class="empty"><div class="empty-text">No employees</div></div></td></tr>`;
+    document.getElementById('emp-pgn').innerHTML = '';
+    return;
+  }
+  const typeBadge = { PERMANENT:'b-blue', CONTRACT:'b-purple', CASUAL:'b-amber', INTERN:'b-teal' };
+  tb.innerHTML = sl.map(e => `<tr>
+    <td class="t-primary t-mono">${e.employeeNo || '—'}</td>
+    <td class="t-primary">${e.fullName || '—'}</td>
+    <td style="font-size:11px">${e.jobTitle || '—'}</td>
+    <td><span class="badge b-gray">${e.department || '—'}</span></td>
+    <td><span class="badge ${typeBadge[e.employmentType] || 'b-gray'}">${e.employmentType || '—'}</span></td>
+    <td><span class="badge ${e.status === 'Active' ? 'b-green' : 'b-amber'}">${e.status || '—'}</span></td>
+    <td class="t-mono">${e.phoneNumber || '—'}</td>
+    <td class="t-mono" style="font-size:10.5px">${e.email || '—'}</td>
+    <td class="t-mono" style="font-size:10.5px">${e.bankName || '—'}</td>
+    <td class="t-mono" style="font-size:10.5px">${e.kraPinNo || '—'}</td>
+    <td class="t-mono" style="font-size:10.5px">${e.hiredDay || '—'}</td>
+    <td><div class="flex gap8">
+      <button class="btn btn-ghost btn-xs" onclick='showDetail(${JSON.stringify(e).replace(/'/g, "&apos;")})'>View</button>
+      <button class="btn btn-teal btn-xs" onclick='openEmpModal(${JSON.stringify(e).replace(/'/g, "&apos;")})'><svg><use href="#i-edit"/></svg></button>
+      <button class="btn btn-danger btn-xs" onclick="deleteEmployee('${e.employeeNo}')"><svg><use href="#i-trash"/></svg></button>
+    </div></td>
+  </tr>`).join('');
+  renderPgn('emp', data.length, 'emp-pgn');
+  document.getElementById('emp-cnt').textContent = data.length;
+}
+function empProfileHTML(e) {
+  const colors = ['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#f97316'];
+  const color = colors[(e.fullName || 'A').charCodeAt(0) % colors.length];
+  const initials = (e.fullName || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
+  const field = (lbl, val) => `<div class="emp-meta-item"><div class="emp-meta-label">${lbl}</div><div class="emp-meta-val">${val || '—'}</div></div>`;
+  return `<div class="emp-profile"><div class="emp-avatar" style="background:${color}">${initials}</div><div class="emp-profile-info"><div class="emp-name">${e.fullName || '—'}</div><div class="emp-sub">${e.employeeNo || '—'} · ${e.jobTitle || '—'} · ${e.department || '—'}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge ${e.status === 'Active' ? 'b-green' : 'b-amber'}">${e.status || '—'}</span>${e.employmentType ? `<span class="badge b-blue">${e.employmentType}</span>` : ''}</div></div></div><div class="emp-meta-grid">${field('Phone', e.phoneNumber)}${field('Email', e.email)}${field('National ID', e.nationalId)}${field('Gender', e.gender)}${field('Date of Birth', e.dateOfBirth)}${field('Hire Date', e.hiredDay)}${field('Address', e.address)}${field('Bank', e.bankName)}${field('Bank Account', e.bankAccount)}${field('KRA PIN', e.kraPinNo)}${field('NSSF No', e.nssfNo)}${field('NHIF No', e.nhifNo)}${field('Shift Group', e.shiftGroup)}${field('Basic Salary', e.basicSalary ? fmtK(e.basicSalary) : null)}${field('NOK Name', e.nextOfKinName)}${field('NOK Phone', e.nextOfKinPhone)}${field('NOK Relation', e.nextOfKinRelation)}</div>`;
+}
+function showDetail(e) {
+  document.getElementById('detail-title').textContent = e.fullName || 'Details';
+  document.getElementById('detail-body').innerHTML = empProfileHTML(e) + '<div style="height:1px;background:var(--border);margin:14px 0"></div><div class="flex gap8 wrap"><button class="btn btn-warning btn-sm" onclick="document.getElementById(\'au-id\').value=\'' + e.employeeNo + '\';nav(document.querySelector(\'[data-page=attendance-user]\'));loadUserAtt();closeModal(\'detail-modal\')"><svg><use href="#i-list"/></svg>Attendance</button><button class="btn btn-teal btn-sm" onclick=\'openEmpModal(' + JSON.stringify(e).replace(/'/g, "&apos;") + ');closeModal("detail-modal")\'><svg><use href="#i-edit"/></svg>Edit</button><button class="btn btn-primary btn-sm" onclick="document.getElementById(\'py-id\').value=\'' + e.employeeNo + '\';nav(document.querySelector(\'[data-page=payroll]\'));onPayrollEmpChange();closeModal(\'detail-modal\')"><svg><use href="#i-dollar"/></svg>Payroll</button></div>';
+  openModal('detail-modal');
+}
 
 // ═══════════════════════════════════════════════════════════
 //  DASHBOARD
