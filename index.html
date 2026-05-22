@@ -831,8 +831,31 @@ tbody td{padding:9px 11px;color:var(--text2);vertical-align:middle}
         <div class="rate-grid">
           <div class="rate-item"><label>Normal Hour Rate</label><div class="rate-input-wrap"><span class="rate-pfx">KES/hr</span><input type="number" id="cfg-normal-rate" value="89" min="1" onchange="updateRatePreview()"/></div></div>
           <div class="rate-item"><label>Overtime Rate</label><div class="rate-input-wrap"><span class="rate-pfx">KES/hr</span><input type="number" id="cfg-ot-rate" value="133.5" min="1" onchange="updateRatePreview()"/></div></div>
-          <div class="rate-item"><label>OT Multiplier</label><div class="rate-input-wrap"><span class="rate-pfx">×</span><input type="number" id="cfg-ot-mult" value="1.5" step="0.1" min="1" onchange="syncOTRate()"/></div></div>
-          <div class="rate-item"><label>Standard Daily Hours</label><div class="rate-input-wrap"><span class="rate-pfx">hrs</span><input type="number" id="cfg-std-hrs" value="8" min="1" max="24" onchange="updateRatePreview()"/></div></div>
+<div class="rate-item">
+  <label>OT Multiplier</label>
+
+  <div class="rate-input-wrap ot-mult-wrap">
+    
+    <!-- Dropdown presets -->
+    <select id="cfg-ot-mult-select" onchange="setOTMultiplier(this.value)">
+      <option value="1.5" selected>1.5×</option>
+      <option value="2">2×</option>
+      <option value="custom">Custom</option>
+    </select>
+
+    <!-- Manual input -->
+    <span class="rate-pfx">×</span>
+    <input 
+      type="number"
+      id="cfg-ot-mult"
+      value="1.5"
+      step="0.1"
+      min="1"
+      onchange="syncOTRate()"
+    />
+
+  </div>
+</div>          <div class="rate-item"><label>Standard Daily Hours</label><div class="rate-input-wrap"><span class="rate-pfx">hrs</span><input type="number" id="cfg-std-hrs" value="8" min="1" max="24" onchange="updateRatePreview()"/></div></div>
           <div class="rate-item"><label>Personal Relief / Month</label><div class="rate-input-wrap"><span class="rate-pfx">KES</span><input type="number" id="cfg-personal-relief" value="2400" min="0"/></div></div>
         </div>
         <div class="period-summary" style="margin-top:10px">Normal: <span id="prev-normal">KES 89/hr</span> · OT: <span id="prev-ot">KES 133.5/hr</span> · Std: <span id="prev-std">8h/day</span></div>
