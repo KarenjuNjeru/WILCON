@@ -1188,7 +1188,16 @@ const ROLE_ACCESS = {
   MANAGER: ['dashboard','analytics','groups','schedule','attendance','attendance-user','overtime','payroll-summary','payroll-report'],
   USER:    ['dashboard','attendance-user']
 };
+function setOTMultiplier(value) {
 
+  const input = document.getElementById("cfg-ot-mult");
+
+  if (value !== "custom") {
+    input.value = value;
+    syncOTRate();
+  }
+
+}
 // ── Get API base from auth screen or sidebar ──
 function BASE_AUTH() {
   return (document.getElementById('auth-base-url').value || 'https://elijoshapp.ngrok.io').replace(/\/+$/,'');
