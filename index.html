@@ -510,7 +510,7 @@ tbody td{padding:9px 11px;color:var(--text2);vertical-align:middle}
     <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
       <label class="auth-label" style="font-size:9px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px">API Base URL</label>
       <input id="auth-base-url" class="auth-input" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;width:100%;font-size:11px;font-family:var(--mono);color:var(--text2);outline:none"
-        value="https://elijoshapp.ngrok.io" placeholder="http://localhost:8599" oninput="syncBaseUrl()"/>
+         placeholder="http://localhost:8599" oninput="syncBaseUrl()"/>
     </div>
   </div>
 </div>
@@ -569,7 +569,7 @@ tbody td{padding:9px 11px;color:var(--text2);vertical-align:middle}
   </nav>
   <div class="sb-bottom">
     <div class="conn-bar"><div class="conn-dot checking" id="conn-dot"></div><div class="conn-text" id="conn-text">checking…</div></div>
-    <div class="api-field"><span class="api-label">API</span><input class="api-input" id="base-url" value="https://elijoshapp.ngrok.io/api/shift"/></div>
+    <div class="api-field"><span class="api-label">API</span><input class="api-input" id="base-url" value="192.168.150.176:8599/api/shift"/></div>
   </div>
 </aside>
 
@@ -1047,7 +1047,7 @@ tbody td{padding:9px 11px;color:var(--text2);vertical-align:middle}
       <div class="grid2">
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="card-dot" style="background:var(--c1)"></span>API Configuration</div></div>
-          <div class="fg" style="margin-bottom:8px"><label class="fl">Base URL</label><input class="fi" id="set-url" placeholder="https://elijoshapp.ngrok.io"/></div>
+          <div class="fg" style="margin-bottom:8px"><label class="fl">Base URL</label><input class="fi" id="set-url" placeholder="192.168.150.176:8599"/></div>
           <div class="fg" style="margin-bottom:12px"><label class="fl">Timeout (ms)</label><input class="fi" type="number" id="set-timeout" value="10000"/></div>
           <button class="btn btn-primary w-full" onclick="saveSettings()"><svg><use href="#i-check"/></svg>Save</button>
         </div>
@@ -1200,7 +1200,7 @@ function setOTMultiplier(value) {
 }
 // ── Get API base from auth screen or sidebar ──
 function BASE_AUTH() {
-  return (document.getElementById('auth-base-url').value || 'https://elijoshapp.ngrok.io').replace(/\/+$/,'');
+  return (document.getElementById('auth-base-url').value || '192.168.150.176:8599').replace(/\/+$/,'');
 }
 function BASE() {
   return document.getElementById('base-url').value.replace(/\/+$/,'');
